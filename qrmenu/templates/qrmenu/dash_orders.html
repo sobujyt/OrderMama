@@ -1,0 +1,12 @@
+{% extends "qrmenu/dash_base.html" %}
+{% block title %}Live orders{% endblock %}
+{% block content %}
+<div id="cfg" hidden data-api="{% url 'api_orders' %}" data-status-url="{% url 'update_status' 0 %}"></div>
+<div class="row">
+  <h1 data-i18n="live_orders">Live orders</h1>
+  <button type="button" id="soundBtn" class="btn ghost" data-i18n="sound_on">Enable sound alert</button>
+</div>
+<p id="empty" class="muted center" data-i18n="no_orders" hidden>No active orders</p>
+<div id="orders" class="orders"></div>
+{% endblock %}
+{% block scripts %}{% load static %}<script src="{% static 'js/orders.js' %}"></script>{% endblock %}

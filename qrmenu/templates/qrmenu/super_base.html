@@ -1,0 +1,8 @@
+{% extends "qrmenu/base.html" %}
+{% block brand_href %}{% url 'super_dashboard' %}{% endblock %}
+{% block brand %}🍽️ OrderMama <small class="muted">Super Admin</small>{% endblock %}
+{% block nav %}
+<a href="{% url 'super_dashboard' %}" data-i18n="restaurants">Restaurants</a>
+<a href="{% url 'super_create' %}" data-i18n="create_restaurant">Create restaurant</a>
+<a href="{% url 'admin:index' %}" target="_blank" rel="noopener">Django admin</a>
+{% endblock %}

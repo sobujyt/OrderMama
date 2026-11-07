@@ -1,0 +1,31 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}OrderMama{% endblock %}</title>
+<script>(function(){var t=localStorage.getItem('om_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t;})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{% block brand_href %}{% url 'index' %}{% endblock %}">{% block brand %}🍽️ OrderMama{% endblock %}</a>
+  <nav class="nav">{% block nav %}{% endblock %}</nav>
+  <div class="tools">
+    <button type="button" id="langBtn" class="chip">বাংলা</button>
+    <button type="button" id="themeBtn" class="chip" aria-label="Theme">🌙</button>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}" class="inline">{% csrf_token %}<button class="chip" data-i18n="logout">Logout</button></form>
+    {% endif %}
+  </div>
+</header>
+<main class="container">
+  {% for m in messages %}<div class="alert {{ m.tags }}">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

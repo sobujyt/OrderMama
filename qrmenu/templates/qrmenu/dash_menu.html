@@ -1,0 +1,35 @@
+{% extends "qrmenu/dash_base.html" %}
+{% load l10n %}
+{% block title %}Menu{% endblock %}
+{% block content %}
+<div class="row"><h1 data-i18n="menu_manage">Menu</h1><a class="btn" href="{% url 'item_new' %}" data-i18n="add_item">Add item</a></div>
+
+<details class="card" {% if form.errors %}open{% endif %}>
+  <summary data-i18n="add_category">Add category</summary>
+  <form method="post" class="form">{% csrf_token %}{{ form.as_p }}<button class="btn" data-i18n="save">Save</button></form>
+</details>
+
+{% for c in categories %}
+<section class="cat card">
+  <div class="row">
+    <h2>{{ c.name }}{% if c.name_bn %} <small class="muted">/ {{ c.name_bn }}</small>{% endif %}</h2>
+    <form method="post" action="{% url 'category_delete' c.pk %}" onsubmit="return confirm(OM.t('confirm'))">{% csrf_token %}<button class="btn sm danger" data-i18n="delete">Delete</button></form>
+  </div>
+  <div class="tablewrap"><table>
+    {% for i in c.items.all %}
+    <tr>
+      <td>{% if i.image %}<img class="thumb" src="{{ i.image.url }}" alt="">{% endif %}</td>
+      <td>{{ i.name }}{% if i.name_bn %}<br><small class="muted">{{ i.name_bn }}</small>{% endif %}</td>
+      <td data-money="{{ i.price|unlocalize }}"></td>
+      <td><form method="post" action="{% url 'item_toggle' i.pk %}">{% csrf_token %}<button class="badge {% if i.is_available %}ready{% else %}cancelled{% endif %}" data-i18n="{% if i.is_available %}available{% else %}unavailable{% endif %}"></button></form></td>
+      <td class="acts">
+        <a class="btn sm ghost" href="{% url 'item_edit' i.pk %}" data-i18n="edit">Edit</a>
+        <form method="post" action="{% url 'item_delete' i.pk %}" onsubmit="return confirm(OM.t('confirm'))">{% csrf_token %}<button class="btn sm danger" data-i18n="delete">Delete</button></form>
+      </td>
+    </tr>
+    {% empty %}<tr><td class="muted" data-i18n="no_items">No items yet</td></tr>
+    {% endfor %}
+  </table></div>
+</section>
+{% endfor %}
+{% endblock %}

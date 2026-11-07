@@ -1,0 +1,24 @@
+{% extends "qrmenu/dash_base.html" %}
+{% block title %}Tables{% endblock %}
+{% block content %}
+<div class="row noprint">
+  <h1 data-i18n="tables">Tables</h1>
+  <div class="acts">
+    <form method="post" class="acts">{% csrf_token %}
+      <input type="number" name="count" min="1" max="50" value="1" class="short" aria-label="count">
+      <button class="btn" data-i18n="add_tables">Add tables</button>
+    </form>
+    <button type="button" class="btn ghost" onclick="window.print()" data-i18n="print">Print</button>
+  </div>
+</div>
+<div class="grid qrs">
+  <div class="card center"><img src="{% url 'dash_qr' %}" alt="QR" width="180" height="180"><p><b data-i18n="menu_qr">Menu QR (no table)</b></p></div>
+  {% for t in tables %}
+  <div class="card center">
+    <img src="{% url 'dash_qr' %}?table={{ t.number }}" alt="QR" width="180" height="180">
+    <p><b><span data-i18n="table">Table</span> {{ t.number }}</b></p>
+    <form method="post" action="{% url 'table_delete' t.pk %}" class="noprint" onsubmit="return confirm(OM.t('confirm'))">{% csrf_token %}<button class="btn sm danger" data-i18n="delete">Delete</button></form>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

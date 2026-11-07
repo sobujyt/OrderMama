@@ -1,0 +1,10 @@
+{% extends "qrmenu/dash_base.html" %}
+{% block content %}
+<div class="card narrow">
+  <h1 data-i18n="{{ title_key }}"></h1>
+  <form method="post" enctype="multipart/form-data" class="form">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" data-i18n="save">Save</button>
+  </form>
+</div>
+{% endblock %}

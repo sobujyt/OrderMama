@@ -1,0 +1,56 @@
+{% extends "qrmenu/base.html" %}
+{% load l10n %}
+{% block title %}{{ restaurant.name }}{% endblock %}
+{% block brand_href %}{% url 'menu' restaurant.slug %}{% endblock %}
+{% block brand %}{% if restaurant.logo %}<img class="logo" src="{{ restaurant.logo.url }}" alt="">{% endif %}<span data-en="{{ restaurant.name }}" data-bn="{{ restaurant.name_bn }}">{{ restaurant.name }}</span>{% endblock %}
+{% block content %}
+<div id="cfg" hidden data-slug="{{ restaurant.slug }}" data-table="{{ table }}" data-url="{% url 'place_order' restaurant.slug %}"></div>
+
+<section class="hero card row">
+  <div><h1 data-i18n="menu">Menu</h1>{% if restaurant.address %}<p class="muted">{{ restaurant.address }}</p>{% endif %}</div>
+  {% if table %}<span class="chip big"><span data-i18n="table">Table</span> {{ table }}</span>{% endif %}
+</section>
+
+{% if categories %}
+<nav class="cats">{% for c in categories %}<a href="#cat-{{ c.id }}" data-en="{{ c.name }}" data-bn="{{ c.name_bn }}">{{ c.name }}</a>{% endfor %}</nav>
+{% for c in categories %}
+<section id="cat-{{ c.id }}" class="cat">
+  <h2 data-en="{{ c.name }}" data-bn="{{ c.name_bn }}">{{ c.name }}</h2>
+  <div class="grid">
+    {% for i in c.items.all %}
+    <article class="item card" data-id="{{ i.id }}" data-price="{{ i.price|unlocalize }}" data-name-en="{{ i.name }}" data-name-bn="{{ i.name_bn }}">
+      {% if i.image %}<img src="{{ i.image.url }}" alt="" loading="lazy">{% endif %}
+      <div class="info">
+        <h3 data-en="{{ i.name }}" data-bn="{{ i.name_bn }}">{{ i.name }}</h3>
+        {% if i.description %}<p class="muted" data-en="{{ i.description }}" data-bn="{{ i.description_bn }}">{{ i.description }}</p>{% endif %}
+        <div class="row"><b class="price" data-money="{{ i.price|unlocalize }}">৳{{ i.price }}</b><div class="act"></div></div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+{% else %}
+<p class="muted center" data-i18n="no_items">No items yet</p>
+{% endif %}
+
+<div id="cartBar" class="cartbar" hidden>
+  <button type="button" class="btn wide" data-act="open"><span id="cartCount"></span><span id="cartTotal"></span></button>
+</div>
+
+<div id="drawer" class="drawer" hidden>
+  <div class="sheet card">
+    <header class="row"><h2 data-i18n="your_order">Your order</h2><button type="button" class="chip" data-act="close" aria-label="Close">✕</button></header>
+    <div id="cartList"></div>
+    <div class="row total"><b data-i18n="total">Total</b><b id="cartSum"></b></div>
+    <div class="form">
+      <input id="fName" type="text" maxlength="80" autocomplete="name" data-i18n-ph="your_name">
+      <input id="fPhone" type="tel" maxlength="20" autocomplete="tel" data-i18n-ph="phone_opt">
+      <textarea id="fNote" rows="2" maxlength="300" data-i18n-ph="note_opt"></textarea>
+      <p id="fErr" class="err"></p>
+      <button id="fSubmit" type="button" class="btn wide" data-act="submit" data-i18n="place_order">Place order</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}{% load static %}<script src="{% static 'js/menu.js' %}"></script>{% endblock %}

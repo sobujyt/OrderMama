@@ -1,0 +1,46 @@
+{% extends "qrmenu/base.html" %}
+{% load l10n %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block brand_href %}{% url 'menu' order.restaurant.slug %}{% endblock %}
+{% block brand %}<span data-en="{{ order.restaurant.name }}" data-bn="{{ order.restaurant.name_bn }}">{{ order.restaurant.name }}</span>{% endblock %}
+{% block content %}
+<div id="cfg" hidden data-api="{% url 'order_status_api' order.restaurant.slug order.public_id %}" data-status="{{ order.status }}"></div>
+<div class="card narrow center">
+  <h1><span data-i18n="order">Order</span> #{{ order.id }}</h1>
+  {% if order.table %}<p class="muted"><span data-i18n="table">Table</span> {{ order.table.number }}</p>{% endif %}
+  <div id="steps" class="steps">
+    <div data-s="pending"><i>1</i><span data-i18n="step_pending">Placed</span></div>
+    <div data-s="preparing"><i>2</i><span data-i18n="step_preparing">Preparing</span></div>
+    <div data-s="ready"><i>3</i><span data-i18n="step_ready">Ready</span></div>
+    <div data-s="served"><i>4</i><span data-i18n="step_served">Served</span></div>
+  </div>
+  <p id="stText" class="stext"></p>
+  <ul class="lines">
+    {% for i in order.items.all %}
+    <li><span>{{ i.quantity }} × <span data-en="{{ i.name }}" data-bn="{{ i.name_bn }}">{{ i.name }}</span></span><b data-money="{{ i.subtotal|unlocalize }}"></b></li>
+    {% endfor %}
+  </ul>
+  <div class="row total"><b data-i18n="total">Total</b><b data-money="{{ order.total|unlocalize }}"></b></div>
+  <a class="btn ghost" href="{% url 'menu' order.restaurant.slug %}{% if order.table %}?table={{ order.table.number }}{% endif %}" data-i18n="back">Back to menu</a>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  var cfg=document.getElementById('cfg').dataset, order=['pending','preparing','ready','served'], status=cfg.status;
+  var steps=document.getElementById('steps'), txt=document.getElementById('stText');
+  function render(){
+    var idx=order.indexOf(status);
+    steps.querySelectorAll('[data-s]').forEach(function(el,i){el.classList.toggle('done',idx>=0&&i<=idx);});
+    steps.hidden=(status==='cancelled');
+    txt.textContent=OM.t('st_'+status); txt.className='stext '+status;
+  }
+  OM.onLang.push(render); render();
+  function poll(){
+    if(status==='served'||status==='cancelled')return;
+    fetch(cfg.api).then(function(r){return r.json();}).then(function(d){if(d.status!==status){status=d.status;render();}}).catch(function(){}).then(function(){setTimeout(poll,5000);});
+  }
+  setTimeout(poll,5000);
+})();
+</script>
+{% endblock %}

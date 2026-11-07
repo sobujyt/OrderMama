@@ -1,0 +1,24 @@
+{% extends "qrmenu/super_base.html" %}
+{% block title %}Super Admin{% endblock %}
+{% block content %}
+<div class="stats">
+  <div class="card stat"><b>{{ stats.restaurants }}</b><span data-i18n="stats_rest">Restaurants</span></div>
+  <div class="card stat"><b>{{ stats.active }}</b><span data-i18n="stats_active">Active</span></div>
+  <div class="card stat"><b>{{ stats.orders }}</b><span data-i18n="stats_orders">Total orders</span></div>
+  <div class="card stat"><b>{{ stats.today }}</b><span data-i18n="stats_today">Orders today</span></div>
+</div>
+<div class="row"><h2 data-i18n="restaurants">Restaurants</h2><a class="btn" href="{% url 'super_create' %}" data-i18n="create_restaurant">Create restaurant</a></div>
+<div class="tablewrap"><table>
+  <tr><th>Name</th><th>Link</th><th>Owner</th><th data-i18n="orders">Orders</th><th>Status</th><th></th></tr>
+  {% for r in restaurants %}
+  <tr>
+    <td>{{ r.name }}</td>
+    <td><a href="{% url 'menu' r.slug %}" target="_blank" rel="noopener">/r/{{ r.slug }}/</a></td>
+    <td>{{ r.owner.username }}</td>
+    <td>{{ r.order_count }}</td>
+    <td><span class="badge {% if r.is_active %}ready{% else %}cancelled{% endif %}" data-i18n="{% if r.is_active %}active{% else %}inactive{% endif %}"></span></td>
+    <td><form method="post" action="{% url 'super_toggle' r.pk %}">{% csrf_token %}<button class="btn sm ghost" data-i18n="{% if r.is_active %}deactivate{% else %}activate{% endif %}"></button></form></td>
+  </tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "qrmenu/dash_base.html" %}
+{% load l10n %}
+{% block title %}History{% endblock %}
+{% block content %}
+<div class="row"><h1 data-i18n="history">History</h1>
+  <div class="card stat"><span data-i18n="today_sales">Today's sales (served)</span><b data-money="{{ revenue|unlocalize }}"></b></div>
+</div>
+<div class="tablewrap"><table>
+  <tr><th>#</th><th data-i18n="table">Table</th><th>Name</th><th>Phone</th><th data-i18n="total">Total</th><th>Status</th><th>Time</th></tr>
+  {% for o in orders %}
+  <tr><td>{{ o.id }}</td><td>{{ o.table.number|default:"-" }}</td><td>{{ o.customer_name }}</td><td>{{ o.customer_phone|default:"-" }}</td>
+  <td data-money="{{ o.total|unlocalize }}"></td><td><span class="badge {{ o.status }}" data-i18n="st_{{ o.status }}"></span></td><td>{{ o.created_at|date:"d M, H:i" }}</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

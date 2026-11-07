@@ -1,0 +1,11 @@
+{% extends "qrmenu/base.html" %}
+{% block brand_href %}{% url 'dash_orders' %}{% endblock %}
+{% block brand %}🍽️ {{ restaurant.name }}{% endblock %}
+{% block nav %}
+<a href="{% url 'dash_orders' %}" data-i18n="live_orders">Live orders</a>
+<a href="{% url 'dash_history' %}" data-i18n="history">History</a>
+<a href="{% url 'dash_menu' %}" data-i18n="menu_manage">Menu</a>
+<a href="{% url 'dash_tables' %}" data-i18n="tables">Tables</a>
+<a href="{% url 'dash_settings' %}" data-i18n="settings">Settings</a>
+<a href="{% url 'menu' restaurant.slug %}" target="_blank" rel="noopener" data-i18n="open_menu">Open menu</a>
+{% endblock %}
